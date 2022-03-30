@@ -58,9 +58,9 @@ async def authorize(code: str = Query(..., description="code given from the auth
     """Callback url for our application to get user token when authorizing connection to our app"""
     access_token, refresh_token = get_token(code)
     user_data = get_user_data(access_token)
-    username = user_data["streamlabs"]["username"]
+    # username = user_data["streamlabs"]["username"]
     # save_token(username, access_token)
-    create_user(username, access_token, refresh_token)
+    create_user(user_data['streamlabs'], access_token, refresh_token)
     return {"message": "Everything went well, thank you for your help"}
 
 
