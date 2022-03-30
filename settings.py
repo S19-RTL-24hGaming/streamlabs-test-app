@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     CLIENT_SECRET: str
     REDIRECT_URI: str = "http://localhost:8000/auth"
 
+    MONGO_URI: str
+    MONGO_DB: str
+
     class Config:
         case_sensitive = True
 
