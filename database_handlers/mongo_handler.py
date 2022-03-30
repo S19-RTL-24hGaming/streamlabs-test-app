@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pymongo import MongoClient
 
 from settings import settings
@@ -16,7 +14,10 @@ def get_donations():
 
     :return: list of donationss
     """
-    return donations.find({})
+    result = []
+    for donation in donations.find({}):
+        result.append(donation)
+    return result
 
 
 def get_donation(donation_id) -> dict:
@@ -25,7 +26,9 @@ def get_donation(donation_id) -> dict:
     :param int donation_id: id of the streamlab donation
     :return: donation dict
     """
-    return donations.find_one({'donation_id': donation_id})
+    if (donation := donations.find_one({'donation_id': donation_id}, {'_id': 0})) is None:
+        return {}
+    return donation
 
 
 def get_filtered_donations(filters: dict):
@@ -34,7 +37,10 @@ def get_filtered_donations(filters: dict):
     :param filters: dict that contains the mongodb filters
     :return:
     """
-    return donations.find(filters)
+    result = []
+    for donation in donations.find(filters, {'_id': 0}):
+        result.append(donation)
+    return result
 
 
 def create_donation(donation: dict):
@@ -51,7 +57,10 @@ def get_users():
 
     :return: all users in form of dict
     """
-    return users.find({})
+    result = []
+    for user in users.find({}):
+        result.append(user)
+    return result
 
 
 def get_user(user_filter: dict):
@@ -60,7 +69,9 @@ def get_user(user_filter: dict):
     :param dict user_filter: filter for the user
     :return: user data from the database
     """
-    return users.find_one(user_filter, {'_id': 0})
+    if (user := users.find_one(user_filter, {'_id': 0})) is None:
+        return {}
+    return user
 
 
 def get_user_token(username: str) -> str:
@@ -69,7 +80,9 @@ def get_user_token(username: str) -> str:
     :param str username: name of the user
     :return: access_token
     """
-    return users.find({'display_name': username}, {'access_token': 1})
+    if (token := users.find_one({'username': username}, {'_id': 0, 'access_token': 1})) is None:
+        return ""
+    return token
 
 
 def create_user(user: dict, access_token: str, refresh_token: str) -> float:
