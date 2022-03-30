@@ -60,7 +60,7 @@ def get_user(user_filter: dict):
     :param dict user_filter: filter for the user
     :return: user data from the database
     """
-    return users.find_one(user_filter)
+    return users.find_one(user_filter, {'_id': 0})
 
 
 def get_user_token(username: str) -> str:
