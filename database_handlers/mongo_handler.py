@@ -83,6 +83,6 @@ def create_user(user: dict, access_token: str, refresh_token: str) -> float:
     data = {"user_id": user['id'], "display_name": user['display_name'], "username": user['username'],
             "access_token": access_token, "refresh_token": refresh_token}
     if users.find_one({'user_id': user['id']}):
-        return users.update_one({'user_id': user['id']}, {'$set': user}).upserted_id
+        return users.update_one({'user_id': user['id']}, {'$set': data}).upserted_id
     _id = users.insert_one(data).inserted_id
     return _id
