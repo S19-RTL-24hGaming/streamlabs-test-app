@@ -64,10 +64,10 @@ def create_donation(donation: Donation, streamer_id: int, created_at: datetime=N
     return _id
 
 
-def get_users() -> list[Streamer]:
-    """Get all users from the Database
+def get_streamers() -> list[Streamer]:
+    """Get all streamers from the Database
 
-    :return: all users in form of dict
+    :return: all streamers in form of dict
     """
     result = []
     for user in users.find({}):
@@ -75,21 +75,21 @@ def get_users() -> list[Streamer]:
     return result
 
 
-def get_user(user_filter: dict):
-    """Get a user by its streamlabs id from the database
+def get_streamer(user_filter: dict):
+    """Get a streamer by its streamlabs id from the database
 
-    :param dict user_filter: filter for the user
-    :return: user data from the database
+    :param dict user_filter: filter for the streamer
+    :return: streamer data from the database
     """
     if (user := users.find_one(user_filter)) is None:
         return None
     return Streamer(**user)
 
 
-def get_user_token(username: str) -> str:
-    """Get access_token fomr user
+def get_streamer_token(username: str) -> str:
+    """Get access_token fomr streamer
 
-    :param str username: name of the user
+    :param str username: name of the streamer
     :return: access_token
     """
     if (token := users.find_one({'username': username}, {'_id': 0, 'access_token': 1})) is None:
@@ -97,14 +97,14 @@ def get_user_token(username: str) -> str:
     return token
 
 
-def create_user(user: dict, access_token: str, refresh_token: str, socket_token: str) -> float:
-    """Insert a user in the database
+def create_streamer(user: dict, access_token: str, refresh_token: str, socket_token: str) -> float:
+    """Insert a streamer in the database
 
     :param dict user: user data
-    :param str access_token: user access token
-    :param str refresh_token: user refresh token
-    :param socket_token: user socket token
-    :return: _id of the user document
+    :param str access_token: streamer access token
+    :param str refresh_token: streamer refresh token
+    :param socket_token: streamer socket token
+    :return: _id of the streamer document
     """
     data = {"user_id": user['id'], "display_name": user['display_name'], "username": user['username'],
             "access_token": access_token, "refresh_token": refresh_token, "socket_token": socket_token}

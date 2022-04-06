@@ -2,7 +2,7 @@ import requests
 from fastapi import FastAPI, Query, Path, Body, HTTPException
 from starlette import status
 
-from core.databases.mongo_handler import create_user, get_user, get_filtered_donations
+from core.databases.mongo_handler import create_streamer, get_streamer, get_filtered_donations
 from api.settings import settings
 from core.models.donations import Donation, OutputDonation
 from core.models.users import Streamer
@@ -14,8 +14,8 @@ tags = [
         "description": "Operations to authenticate for this API"
     },
     {
-        "name": "User",
-        "description": "Operations to get user data"
+        "name": "Streamer",
+        "description": "Operations to get streamer data"
     }
 ]
 
@@ -44,28 +44,28 @@ async def authorize(code: str = Query(..., description="code given from the auth
     access_token, refresh_token = get_token(code)
     user_data = get_user_data(access_token)
     socket_token = get_socket_token(access_token)
-    create_user(user_data['streamlabs'], access_token, refresh_token, socket_token)
+    create_streamer(user_data['streamlabs'], access_token, refresh_token, socket_token)
     return {"message": "Everything went well, thank you for your help"}
 
 
-@app.get("/user/{username}", tags=["User"], response_model=Streamer)
-async def user_data(username: str = Path(..., description="username of the user")):
+@app.get("/streamer/{username}", tags=["Streamer"], response_model=Streamer)
+async def user_data(username: str = Path(..., description="username of the streamer")):
     """Get user data from the database"""
-    return get_user({'display_name': username})
+    return get_streamer({'display_name': username})
 
 
-@app.get("/user/{username}/donations", tags=["User"], response_model=list[OutputDonation])
-async def user_donations(username: str = Path(..., description="username of the user")):
+@app.get("/streamer/{username}/donations", tags=["Streamer"], response_model=list[OutputDonation])
+async def user_donations(username: str = Path(..., description="username of the streamer")):
     """Get user donations from the database"""
-    user = get_user({'display_name': username})
+    user = get_streamer({'display_name': username})
     donations = get_filtered_donations({'streamer_id': user['user_id']})
     return donations
 
 
-@app.post("/users/{username}/donations", tags=["User"], response_model=str)
-async def create_donation(username: str = Path(..., description="username of the user"), donation: Donation = Body(..., description="donation data")):
+@app.post("/streamer/{username}/donations", status_code=status.HTTP_201_CREATED, tags=["Streamer"], response_model=str)
+async def create_donation(username: str = Path(..., description="username of the streamer"), donation: Donation = Body(..., description="donation data")):
     """Create a donation for a given user"""
-    user_id = get_user({'display_name': username})['user_id']
+    user_id = get_streamer({'display_name': username})['user_id']
     if not user_id:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return create_donation(donation, int(user_id))
