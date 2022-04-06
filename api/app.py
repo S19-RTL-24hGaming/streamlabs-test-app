@@ -50,10 +50,7 @@ async def authorize(code: str = Query(..., description="code given from the auth
 @app.get("/user", tags=["User"], response_model=Streamer)
 async def user_data(username: str = Query(..., description="username of the user")):
     """Get user data from the database"""
-    user = get_user({'display_name': username})
-    if not user:
-        return {}
-    return user
+    return get_user({'display_name': username})
 
 
 @app.get("/global", tags=["Global"], response_model=dict)
