@@ -27,6 +27,22 @@ def get_token(code: str) -> tuple[str, str]:
     return data["access_token"], data["refresh_token"]
 
 
+def get_socket_token(access_token: str) -> str:
+    """Get the socket token for the user
+
+    :param str access_token: users access_token
+    :return: socket token
+    """
+    params = {
+        "access_token": access_token
+    }
+    r = requests.get("https://streamlabs.com/api/v1.0/socket/token", params=params)
+    if r.status_code != 200:
+        print(r.status_code, r.text, r.request.body)
+        raise HTTPException(500, "Something went wrong when requesting your user data")
+    return r.json()["socket_token"]
+
+
 def get_user_data(token):
     """Request user data from the streamlabs API
 

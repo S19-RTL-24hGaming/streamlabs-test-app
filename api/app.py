@@ -3,8 +3,8 @@ from fastapi import FastAPI, Query
 from starlette import status
 
 from core.databases.mongo_handler import create_user, get_user
-from settings import settings
-from core.streamlabs_handler import get_token, get_user_data
+from api.settings import settings
+from core.streamlabs_handler import get_token, get_user_data, get_socket_token
 
 tags = [
     {
@@ -41,7 +41,8 @@ async def authorize(code: str = Query(..., description="code given from the auth
     """Callback url for our application to get user token when authorizing connection to our app"""
     access_token, refresh_token = get_token(code)
     user_data = get_user_data(access_token)
-    create_user(user_data['streamlabs'], access_token, refresh_token)
+    socket_token = get_socket_token(access_token)
+    create_user(user_data['streamlabs'], access_token, refresh_token, socket_token)
     return {"message": "Everything went well, thank you for your help"}
 
 

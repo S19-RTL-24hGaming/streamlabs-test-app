@@ -85,16 +85,17 @@ def get_user_token(username: str) -> str:
     return token
 
 
-def create_user(user: dict, access_token: str, refresh_token: str) -> float:
+def create_user(user: dict, access_token: str, refresh_token: str, socket_token: str) -> float:
     """Insert a user in the database
 
-    :param str refresh_token: user refresh token
-    :param str access_token: user access token
     :param dict user: user data
+    :param str access_token: user access token
+    :param str refresh_token: user refresh token
+    :param socket_token: user socket token
     :return: _id of the user document
     """
     data = {"user_id": user['id'], "display_name": user['display_name'], "username": user['username'],
-            "access_token": access_token, "refresh_token": refresh_token}
+            "access_token": access_token, "refresh_token": refresh_token, "socket_token": socket_token}
     if users.find_one({'user_id': user['id']}):
         return users.update_one({'user_id': user['id']}, {'$set': data}).upserted_id
     _id = users.insert_one(data).inserted_id
