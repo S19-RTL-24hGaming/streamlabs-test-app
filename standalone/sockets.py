@@ -27,7 +27,7 @@ def event(data):
 
 
 async def main():
-    await sio.connect('https://sockets.streamlabs.com/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbiI6IjNGRDY2Qjk3MjI0OERGRDAxM0M4IiwicmVhZF9vbmx5Ijp0cnVlLCJwcmV2ZW50X21hc3RlciI6dHJ1ZSwidHdpdGNoX2lkIjoiOTE1MDcxMDEifQ.75MngQ3iPRpfO6stXpl5iJu4xTP3bkmiVbRIjt1MCOs')
+    await sio.connect('https://sockets.streamlabs.com/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbiI6IjNGRDY2Qjk3MjI0OERGRDAxM0M4IiwicmVhZF9vbmx5Ijp0cnVlLCJwcmV2ZW50X21hc3RlciI6dHJ1ZSwidHdpdGNoX2lkIjoiOTE1MDcxMDEifQ.75MngQ3iPRpfO6stXpl5iJu4xTP3bkmiVbRIjt1MCOs', transports=['websocket'])
     await sio.wait()
 
 
