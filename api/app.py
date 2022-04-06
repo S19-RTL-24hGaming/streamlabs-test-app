@@ -1,9 +1,10 @@
 import requests
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Path, Body, HTTPException
 from starlette import status
 
-from core.databases.mongo_handler import create_user, get_user
+from core.databases.mongo_handler import create_user, get_user, get_filtered_donations
 from api.settings import settings
+from core.models.donations import Donation, OutputDonation
 from core.models.users import Streamer
 from core.streamlabs_handler import get_token, get_user_data, get_socket_token
 
@@ -47,10 +48,27 @@ async def authorize(code: str = Query(..., description="code given from the auth
     return {"message": "Everything went well, thank you for your help"}
 
 
-@app.get("/user", tags=["User"], response_model=Streamer)
-async def user_data(username: str = Query(..., description="username of the user")):
+@app.get("/user/{username}", tags=["User"], response_model=Streamer)
+async def user_data(username: str = Path(..., description="username of the user")):
     """Get user data from the database"""
     return get_user({'display_name': username})
+
+
+@app.get("/user/{username}/donations", tags=["User"], response_model=list[OutputDonation])
+async def user_donations(username: str = Path(..., description="username of the user")):
+    """Get user donations from the database"""
+    user = get_user({'display_name': username})
+    donations = get_filtered_donations({'streamer_id': user['user_id']})
+    return donations
+
+
+@app.post("/users/{username}/donations", tags=["User"], response_model=str)
+async def create_donation(username: str = Path(..., description="username of the user"), donation: Donation = Body(..., description="donation data")):
+    """Create a donation for a given user"""
+    user_id = get_user({'display_name': username})['user_id']
+    if not user_id:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return create_donation(donation, int(user_id))
 
 
 @app.get("/global", tags=["Global"], response_model=dict)

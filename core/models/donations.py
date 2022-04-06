@@ -19,5 +19,6 @@ class Donation(BaseModel):
         json_encoders = {ObjectId: str}
 
 
-class DatabaseDonation(Donation):
+class OutputDonation(Donation):
+    streamer_id: int = Field(..., description="The donation's streamer's unique identifier.")
     created_at: datetime = Field(..., description="The donation's creation date.")

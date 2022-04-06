@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from fastapi.encoders import jsonable_encoder
 from pymongo import MongoClient
 
 from api.settings import settings
-from core.models.donations import Donation
-from core.models.users import Streamer
+from core.models.donations import Donation, OutputDonation
+from core.models.users import Streamer, DatabaseStreamer
 
 client = MongoClient(settings.MONGO_URI)
 db = client[settings.MONGO_DB]
@@ -19,7 +21,7 @@ def get_donations() -> list[Donation]:
     """
     result = []
     for donation in donations.find({}):
-        result.append(Donation(**donation))
+        result.append(OutputDonation(**donation))
     return result
 
 
@@ -31,10 +33,10 @@ def get_donation(donation_id) -> Donation:
     """
     if (donation := donations.find_one({'donation_id': donation_id})) is None:
         return None
-    return Donation(**donation)
+    return OutputDonation(**donation)
 
 
-def get_filtered_donations(filters: dict):
+def get_filtered_donations(filters: dict) -> list[Donation]:
     """Get donations in the database by filtering them
 
     :param filters: dict that contains the mongodb filters
@@ -42,16 +44,22 @@ def get_filtered_donations(filters: dict):
     """
     result = []
     for donation in donations.find(filters):
-        result.append(donation)
+        result.append(OutputDonation(**donation))
     return result
 
 
-def create_donation(donation: Donation) -> str:
+def create_donation(donation: Donation, streamer_id: int, created_at: datetime=None) -> str:
     """Insert a donation inside of the database
 
     :param dict donation: donation in the form of a dict
+    :param streamer_id: id of the streamer
+    :param created_at: datetime of the donation
     """
-    data = jsonable_encoder(donation)
+    if created_at:
+        don = OutputDonation(**donation.dict(), streamer_id=streamer_id, created_at=created_at)
+    else:
+        don = OutputDonation(**donation.dict(), streamer_id=streamer_id, created_at=datetime.now())
+    data = jsonable_encoder(don)
     _id = donations.insert_one(data).inserted_id
     return _id
 
@@ -100,7 +108,7 @@ def create_user(user: dict, access_token: str, refresh_token: str, socket_token:
     """
     data = {"user_id": user['id'], "display_name": user['display_name'], "username": user['username'],
             "access_token": access_token, "refresh_token": refresh_token, "socket_token": socket_token}
-    streamer = Streamer(**data)
+    streamer = DatabaseStreamer(**data, created_at=datetime.now(), updated_at=datetime.now())
     data = jsonable_encoder(streamer)
     if users.find_one({'user_id': user['id']}):
         return users.update_one({'user_id': user['id']}, {'$set': data}).upserted_id
