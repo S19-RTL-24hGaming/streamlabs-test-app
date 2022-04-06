@@ -2,9 +2,9 @@ import requests
 from fastapi import FastAPI, Query
 from starlette import status
 
-from database_handlers.mongo_handler import create_user, get_user
+from core.databases.mongo_handler import create_user, get_user
 from settings import settings
-from streamlabs_handler import get_token, get_user_data
+from core.streamlabs_handler import get_token, get_user_data
 
 tags = [
     {
@@ -49,3 +49,9 @@ async def authorize(code: str = Query(..., description="code given from the auth
 async def user_data(username: str = Query(..., description="username of the user")):
     """Get user data from the database"""
     return get_user({'display_name': username})
+
+
+@app.get("/global", tags=["Global"], response_model=dict)
+async def global_data():
+    """Get global data from the database"""
+    return requests.get("https://streamlabscharity.com/api/v1/causes/televie-frs-fnrs").json()

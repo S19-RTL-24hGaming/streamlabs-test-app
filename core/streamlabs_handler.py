@@ -3,7 +3,7 @@ from typing import List
 import requests
 from fastapi import HTTPException
 
-from settings import settings
+from api.settings import settings
 
 
 def get_token(code: str) -> tuple[str, str]:
