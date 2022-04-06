@@ -29,8 +29,8 @@ def get_donation(donation_id) -> Donation:
     :param int donation_id: id of the streamlab donation
     :return: donation dict
     """
-    if (donation := donations.find_one({'donation_id': donation_id}, {'_id': 0})) is None:
-        return {}
+    if (donation := donations.find_one({'donation_id': donation_id})) is None:
+        return None
     return Donation(**donation)
 
 
@@ -41,7 +41,7 @@ def get_filtered_donations(filters: dict):
     :return:
     """
     result = []
-    for donation in donations.find(filters, {'_id': 0}):
+    for donation in donations.find(filters):
         result.append(donation)
     return result
 
@@ -73,8 +73,8 @@ def get_user(user_filter: dict):
     :param dict user_filter: filter for the user
     :return: user data from the database
     """
-    if (user := users.find_one(user_filter, {'_id': 0})) is None:
-        return {}
+    if (user := users.find_one(user_filter)) is None:
+        return None
     return Streamer(**user)
 
 
