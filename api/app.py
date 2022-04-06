@@ -58,17 +58,17 @@ async def user_data(username: str = Path(..., description="username of the strea
 async def user_donations(username: str = Path(..., description="username of the streamer")):
     """Get user donations from the database"""
     user = get_streamer({'display_name': username})
-    donations = get_filtered_donations({'streamer_id': user['user_id']})
+    donations = get_filtered_donations({'streamer_id': user.user_id})
     return donations
 
 
 @app.post("/streamer/{username}/donations", status_code=status.HTTP_201_CREATED, tags=["Streamer"], response_model=str)
 async def create_donation(username: str = Path(..., description="username of the streamer"), donation: Donation = Body(..., description="donation data")):
     """Create a donation for a given user"""
-    user_id = get_streamer({'display_name': username})['user_id']
+    user_id = get_streamer({'display_name': username}).user_id
     if not user_id:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    return create_donation(donation, int(user_id))
+    return create_donation(donation, user_id)
 
 
 @app.get("/global", tags=["Global"], response_model=dict)
