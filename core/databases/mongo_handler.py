@@ -1,6 +1,9 @@
+from fastapi.encoders import jsonable_encoder
 from pymongo import MongoClient
 
 from api.settings import settings
+from core.models.donations import Donation
+from core.models.users import Streamer
 
 client = MongoClient(settings.MONGO_URI)
 db = client[settings.MONGO_DB]
@@ -9,18 +12,18 @@ donations = db['donations']
 users = db['users']
 
 
-def get_donations():
+def get_donations() -> list[Donation]:
     """Get all donations in the database
 
     :return: list of donationss
     """
     result = []
     for donation in donations.find({}):
-        result.append(donation)
+        result.append(Donation(**donation))
     return result
 
 
-def get_donation(donation_id) -> dict:
+def get_donation(donation_id) -> Donation:
     """Get a donation from the database by using its id
 
     :param int donation_id: id of the streamlab donation
@@ -28,7 +31,7 @@ def get_donation(donation_id) -> dict:
     """
     if (donation := donations.find_one({'donation_id': donation_id}, {'_id': 0})) is None:
         return {}
-    return donation
+    return Donation(**donation)
 
 
 def get_filtered_donations(filters: dict):
@@ -43,23 +46,24 @@ def get_filtered_donations(filters: dict):
     return result
 
 
-def create_donation(donation: dict):
+def create_donation(donation: Donation) -> str:
     """Insert a donation inside of the database
 
     :param dict donation: donation in the form of a dict
     """
-    _id = donations.insert_one(donation).inserted_id
+    data = jsonable_encoder(donation)
+    _id = donations.insert_one(data).inserted_id
     return _id
 
 
-def get_users():
+def get_users() -> list[Streamer]:
     """Get all users from the Database
 
     :return: all users in form of dict
     """
     result = []
     for user in users.find({}):
-        result.append(user)
+        result.append(Streamer(**user))
     return result
 
 
@@ -71,7 +75,7 @@ def get_user(user_filter: dict):
     """
     if (user := users.find_one(user_filter, {'_id': 0})) is None:
         return {}
-    return user
+    return Streamer(**user)
 
 
 def get_user_token(username: str) -> str:
@@ -96,6 +100,8 @@ def create_user(user: dict, access_token: str, refresh_token: str, socket_token:
     """
     data = {"user_id": user['id'], "display_name": user['display_name'], "username": user['username'],
             "access_token": access_token, "refresh_token": refresh_token, "socket_token": socket_token}
+    streamer = Streamer(**data)
+    data = jsonable_encoder(streamer)
     if users.find_one({'user_id': user['id']}):
         return users.update_one({'user_id': user['id']}, {'$set': data}).upserted_id
     _id = users.insert_one(data).inserted_id

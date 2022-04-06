@@ -4,6 +4,7 @@ from starlette import status
 
 from core.databases.mongo_handler import create_user, get_user
 from api.settings import settings
+from core.models.users import Streamer
 from core.streamlabs_handler import get_token, get_user_data, get_socket_token
 
 tags = [
@@ -46,7 +47,7 @@ async def authorize(code: str = Query(..., description="code given from the auth
     return {"message": "Everything went well, thank you for your help"}
 
 
-@app.get("/user", tags=["User"], response_model=dict)
+@app.get("/user", tags=["User"], response_model=Streamer)
 async def user_data(username: str = Query(..., description="username of the user")):
     """Get user data from the database"""
     return get_user({'display_name': username})
