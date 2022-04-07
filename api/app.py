@@ -55,13 +55,18 @@ async def authorize(code: str = Query(..., description="code given from the auth
 @app.get("/streamer/{username}", tags=["Streamer"], response_model=Streamer)
 async def user_data(username: str = Path(..., description="username of the streamer")):
     """Get user data from the database"""
-    return get_streamer({'display_name': username})
+    user = get_streamer({'display_name': username})
+    if not user:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return user
 
 
 @app.get("/streamer/{username}/donations", tags=["Streamer"], response_model=list[OutputDonation])
 async def user_donations(username: str = Path(..., description="username of the streamer")):
     """Get user donations from the database"""
     user = get_streamer({'display_name': username})
+    if not user:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     donations = get_filtered_donations({'streamer_id': user.user_id})
     return donations
 
