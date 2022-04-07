@@ -2,7 +2,7 @@ import requests
 from fastapi import FastAPI, Query, Path, Body, HTTPException
 from starlette import status
 
-from core.databases.mongo_handler import create_streamer, get_streamer, get_filtered_donations
+from core.databases.mongo_handler import create_streamer, get_streamer, get_filtered_donations, create_donation
 from api.settings import settings
 from core.models.donations import Donation, OutputDonation
 from core.models.users import Streamer
@@ -63,7 +63,7 @@ async def user_donations(username: str = Path(..., description="username of the 
 
 
 @app.post("/streamer/{username}/donations", status_code=status.HTTP_201_CREATED, tags=["Streamer"], response_model=str)
-async def create_donation(username: str = Path(..., description="username of the streamer"), donation: Donation = Body(..., description="donation data")):
+async def new_donation(username: str = Path(..., description="username of the streamer"), donation: Donation = Body(..., description="donation data")):
     """Create a donation for a given user"""
     user_id = get_streamer({'display_name': username}).user_id
     if not user_id:
