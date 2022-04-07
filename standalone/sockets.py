@@ -2,6 +2,9 @@ import asyncio
 
 import socketio
 
+from core.databases.mongo_handler import create_donation, get_streamer
+from core.models.donations import Donation
+
 sio = socketio.AsyncClient()
 
 
@@ -23,7 +26,16 @@ def connect_error(data):
 
 @sio.event
 def event(data):
-    print(data)
+    if data['type'] == 'donation':
+        message = data['message']
+        streamer_id = get_streamer({'display_name': message['to']['name']}).user_id
+        if streamer_id:
+            donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['name'],
+                                message=message['message'])
+            create_donation(donation, streamer_id)
+            print("Donation saved: {}".format(message))
+    else:
+        print("Not a donation, non pertinent")
 
 
 async def main():
