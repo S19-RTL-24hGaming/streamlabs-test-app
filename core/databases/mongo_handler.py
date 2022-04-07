@@ -48,10 +48,10 @@ def get_filtered_donations(filters: dict) -> list[Donation]:
     return result
 
 
-def create_donation(donation: Donation, streamer_id: int, created_at: datetime=None) -> str:
+def create_donation(donation: Donation, streamer_id: int, created_at: datetime = None) -> str:
     """Insert a donation inside of the database
 
-    :param dict donation: donation in the form of a dict
+    :param donation: donation in the form of a Donation object
     :param streamer_id: id of the streamer
     :param created_at: datetime of the donation
     """
@@ -87,7 +87,7 @@ def get_streamer(user_filter: dict):
 
 
 def get_streamer_token(username: str) -> str:
-    """Get access_token fomr streamer
+    """Get access_token for streamer
 
     :param str username: name of the streamer
     :return: access_token
