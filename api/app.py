@@ -16,6 +16,10 @@ tags = [
     {
         "name": "Streamer",
         "description": "Operations to get streamer data"
+    },
+    {
+        "name": "Charity",
+        "description": "Operations to get global data from the streamlabscharity API"
     }
 ]
 
@@ -71,7 +75,7 @@ async def new_donation(username: str = Path(..., description="username of the st
     return create_donation(donation, user_id)
 
 
-@app.get("/global", tags=["Global"], response_model=dict)
-async def global_data():
+@app.get("/charity", tags=["Charity"], response_model=dict)
+async def charity_data():
     """Get global data from the database"""
     return requests.get("https://streamlabscharity.com/api/v1/causes/televie-frs-fnrs").json()
