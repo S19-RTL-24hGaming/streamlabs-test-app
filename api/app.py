@@ -57,7 +57,7 @@ async def user_data(username: str = Path(..., description="username of the strea
     """Get user data from the database"""
     user = get_streamer({'display_name': username})
     if not user:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
 
 
@@ -66,7 +66,7 @@ async def user_donations(username: str = Path(..., description="username of the 
     """Get user donations from the database"""
     user = get_streamer({'display_name': username})
     if not user:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     donations = get_filtered_donations({'streamer_id': user.user_id})
     return donations
 
