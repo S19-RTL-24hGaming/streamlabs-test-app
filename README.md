@@ -28,5 +28,5 @@ uvicorn api.app:app --reload
 
 To run the standalone socket part
 ```shell
-python standalone/socket.py
+python -m standalone.sockets
 ```
