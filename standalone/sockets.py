@@ -27,7 +27,7 @@ def connect_error(data):
 @sio.event
 def event(data):
     if data['type'] == 'donation':
-        message = data['message']
+        message = data['message'][0]
         streamer_id = get_streamer({'display_name': message['to']['name']}).user_id
         if streamer_id:
             donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['name'],
