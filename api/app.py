@@ -2,8 +2,8 @@ import requests
 from fastapi import FastAPI, Query, Path, Body, HTTPException
 from starlette import status
 
-from core.databases.mongo_handler import create_streamer, get_streamer, get_filtered_donations, create_donation
 from api.settings import settings
+from core.databases.mongo_handler import create_streamer, get_streamer, get_filtered_donations, create_donation
 from core.models.donations import Donation, OutputDonation
 from core.models.users import Streamer
 from core.streamlabs_handler import get_token, get_user_data, get_socket_token
@@ -76,7 +76,7 @@ async def new_donation(username: str = Path(..., description="username of the st
     """Create a donation for a given user"""
     user_id = get_streamer({'display_name': username}).user_id
     if not user_id:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return create_donation(donation, user_id)
 
 
