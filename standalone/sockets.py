@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 
 import socketio
 
@@ -26,13 +27,13 @@ def connect_error(data):
 
 @sio.event
 def event(data):
-    if data['type'] == 'donation':
+    if data['type'] == 'streamlabscharitydonation':
         message = data['message'][0]
-        streamer_id = get_streamer({'display_name': message['to']['name']}).user_id
+        streamer_id = get_streamer({'display_name': message['name']}).user_id
         if streamer_id:
-            donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['name'],
+            donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['from'],
                                 message=message['message'])
-            create_donation(donation, streamer_id)
+            create_donation(donation, streamer_id, datetime.fromtimestamp(message['createdAt']))
             print("Donation saved: {}".format(message))
     else:
         print("Not a donation, non pertinent")
