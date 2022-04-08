@@ -43,7 +43,7 @@ def get_socket_token(access_token: str) -> str:
     return r.json()["socket_token"]
 
 
-def get_user_data(token):
+def get_user_data(token: str) -> dict:
     """Request user data from the streamlabs API
 
     :param str token: users access_token
@@ -60,7 +60,7 @@ def get_user_data(token):
     return r.json()
 
 
-def get_donations(token) -> List:
+def get_donations(token: str) -> List:
     """Get all the domations of a particular user from the streamlabs API
 
     :param str token: users access_token
@@ -76,7 +76,7 @@ def get_donations(token) -> List:
     return r.json()["data"]
 
 
-def create_donation(name, message, amount: float, email, token) -> str:
+def create_donation(name, message, amount: float, email, token: str) -> str:
     """Create a donation that is going to be pushed to streamlabs as a real donation. All donations will be
     expressed in EUR for compatibility.
 
