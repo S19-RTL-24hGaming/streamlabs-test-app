@@ -33,7 +33,7 @@ def event(data):
         if streamer_id:
             donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['from'],
                                 message=message['message'])
-            create_donation(donation, streamer_id, datetime.fromtimestamp(message['createdAt']))
+            create_donation(donation, streamer_id, datetime.strptime(message['createdAt'], '%Y-%m-%d %H:%M:%S'))
             print("Donation saved: {}".format(message))
     else:
         print("Not a donation, non pertinent")
