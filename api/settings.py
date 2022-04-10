@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     MONGO_URI: str
     MONGO_DB: str
 
+    BASE_PATH: str
+
     class Config:
         case_sensitive = True
 

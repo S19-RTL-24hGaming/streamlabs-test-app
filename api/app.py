@@ -2,11 +2,17 @@ import requests
 from fastapi import FastAPI, Query, Path, Body, HTTPException
 from starlette import status
 
+from starlette.templating import Jinja2Templates
+
 from api.settings import settings
-from core.databases.mongo_handler import create_streamer, get_streamer, get_filtered_donations, create_donation
+from core.databases.mongo_handler import create_streamer, get_streamer, get_filtered_donations, create_donation, \
+    get_donations_scoreboard
 from core.models.donations import Donation, OutputDonation
 from core.models.users import Streamer
 from core.streamlabs_handler import get_token, get_user_data, get_socket_token
+
+
+TEMPLATES = Jinja2Templates(directory=settings.BASE_PATH / 'templates')
 
 tags = [
     {
@@ -84,3 +90,10 @@ async def new_donation(username: str = Path(..., description="username of the st
 async def charity_data():
     """Get global data from the database"""
     return requests.get("https://streamlabscharity.com/api/v1/causes/televie-frs-fnrs").json()
+
+
+@app.get("/charity/scoreboard", tags=["Charity"])
+async def charity_scoreboard():
+    """Get global data from the database"""
+    donations = get_donations_scoreboard()
+    return TEMPLATES.TemplateResponse("scoreboard.html", {"donations": donations})

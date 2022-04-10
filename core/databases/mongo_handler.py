@@ -48,6 +48,14 @@ def get_filtered_donations(filters: dict) -> list[Donation]:
     return result
 
 
+def get_donations_scoreboard() -> list[Donation]:
+    """Get the top donations in form of a scoreboard"""
+    result = []
+    for donation in donations.find({}).sort('amount', -1).limit(10):
+        result.append(Donation(**donation))
+    return result
+
+
 def create_donation(donation: Donation, streamer_id: int, created_at: datetime = None) -> str:
     """Insert a donation inside of the database
 
