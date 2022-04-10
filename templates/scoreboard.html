@@ -6,9 +6,9 @@
 </head>
 <body>
     <ul>
-        {% for donation in donations %}
+        {% for donation in donations -%}
             <li>{{ donation.amount }} - {{ donation.donor }}</li>
-        {% endfor %}
+        {% endfor -%}
     </ul>
 </body>
 </html>
