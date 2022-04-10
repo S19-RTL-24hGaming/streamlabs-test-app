@@ -1,5 +1,5 @@
 import requests
-from fastapi import FastAPI, Query, Path, Body, HTTPException
+from fastapi import FastAPI, Query, Path, Body, HTTPException, Request
 from starlette import status
 
 from starlette.templating import Jinja2Templates
@@ -12,7 +12,7 @@ from core.models.users import Streamer
 from core.streamlabs_handler import get_token, get_user_data, get_socket_token
 
 
-TEMPLATES = Jinja2Templates(directory=settings.BASE_PATH / 'templates')
+TEMPLATES = Jinja2Templates(directory=settings.BASE_PATH + 'templates')
 
 tags = [
     {
@@ -93,7 +93,7 @@ async def charity_data():
 
 
 @app.get("/charity/scoreboard", tags=["Charity"])
-async def charity_scoreboard():
+async def charity_scoreboard(request: Request):
     """Get global data from the database"""
     donations = get_donations_scoreboard()
-    return TEMPLATES.TemplateResponse("scoreboard.html", {"donations": donations})
+    return TEMPLATES.TemplateResponse("scoreboard.html", {"request": request, "donations": donations})
