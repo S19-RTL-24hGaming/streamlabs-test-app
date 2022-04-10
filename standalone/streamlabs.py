@@ -33,7 +33,7 @@ def process_donation(result: dict):
     """
     donation_data = result["donation"]
     streamer_id = int(result["member"]["user"]['id'])
-    message = donation_data["comment"]["text"] if donation_data["comment"]["text"] else ""
+    message = donation_data["comment"]["text"] if donation_data["comment"] else ""
     donation = Donation(donation_id=donation_data['id'], amount=donation_data['converted_amount'],
                         donor=donation_data['display_name'], message=message)
     create_donation(donation, streamer_id, datetime.strptime(donation_data['created_at'][:-6], "%Y-%m-%dT%H:%M:%S"))
@@ -49,7 +49,11 @@ def get_team_donations(team_id: str, donation_id: str = None):
         url = f"https://streamlabscharity.com/api/v1/teams/{team_id}/donations?id={donation_id}"
     else:
         url = f"https://streamlabscharity.com/api/v1/teams/{team_id}/donations"
-    data = requests.get(url).json()
+    response = requests.get(url)
+    if response.status_code != 200:
+        print(response.status_code, response.text, response.headers)
+        return
+    data = response.json()
     for result in data:
         try:
             process_donation(result)
