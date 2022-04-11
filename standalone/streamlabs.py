@@ -68,7 +68,7 @@ def process_donation(result: dict):
     :param dict result: donation dat fron the API
     """
     donation_data = result["donation"]
-    streamer_id = int(result["member"]["user"]['id'])
+    streamer_id = int(result["member"]["user"]['id']) if result["member"] else settings.DEFAULT_STREAMER_ID
     message = donation_data["comment"]["text"] if donation_data["comment"] else ""
     donation = Donation(donation_id=donation_data['id'], amount=float(donation_data['converted_amount']) / 100,
                         donor=donation_data['display_name'], message=message)
