@@ -40,7 +40,7 @@ async def process_donation_async(result: dict):
     donation_data = result["donation"]
     streamer_id = int(result["member"]["user"]['id'])
     message = donation_data["comment"]["text"] if donation_data["comment"] else ""
-    donation = Donation(donation_id=donation_data['id'], amount=donation_data['converted_amount'],
+    donation = Donation(donation_id=donation_data['id'], amount=float(donation_data['converted_amount']) / 100,
                         donor=donation_data['display_name'], message=message)
     await create_donation_async(donation, streamer_id,
                                 datetime.strptime(donation_data['created_at'][:-6], "%Y-%m-%dT%H:%M:%S"))
