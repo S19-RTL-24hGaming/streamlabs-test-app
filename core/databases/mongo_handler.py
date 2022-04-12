@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import Union
 
 from fastapi.encoders import jsonable_encoder
 from pymongo import MongoClient
 
 from api.settings import settings
 from core.models.donations import Donation, OutputDonation
-from core.models.users import Streamer, DatabaseStreamer
+from core.models.streamers import Streamer, DatabaseStreamer
 
 client = MongoClient(settings.MONGO_URI)
 db = client[settings.MONGO_DB]
@@ -14,7 +15,7 @@ donations = db['donations']
 users = db['users']
 
 
-def get_donations() -> list[Donation]:
+def get_donations() -> list[OutputDonation]:
     """Get all donations in the database
 
     :return: list of donationss
@@ -25,7 +26,7 @@ def get_donations() -> list[Donation]:
     return result
 
 
-def get_donation(donation_id) -> Donation:
+def get_donation(donation_id) -> Union[OutputDonation, None]:
     """Get a donation from the database by using its id
 
     :param int donation_id: id of the streamlab donation
@@ -36,7 +37,7 @@ def get_donation(donation_id) -> Donation:
     return OutputDonation(**donation)
 
 
-def get_filtered_donations(filters: dict) -> list[Donation]:
+def get_filtered_donations(filters: dict) -> list[OutputDonation]:
     """Get donations in the database by filtering them
 
     :param filters: dict that contains the mongodb filters
@@ -83,7 +84,7 @@ def get_streamers() -> list[Streamer]:
     return result
 
 
-def get_streamer(user_filter: dict):
+def get_streamer(user_filter: dict) -> Union[Streamer, None]:
     """Get a streamer by its streamlabs id from the database
 
     :param dict user_filter: filter for the streamer
@@ -105,7 +106,7 @@ def get_streamer_token(username: str) -> str:
     return token
 
 
-def create_streamer(user: dict, access_token: str, refresh_token: str, socket_token: str) -> float:
+def create_streamer(user: dict, access_token: str, refresh_token: str, socket_token: str) -> str:
     """Insert a streamer in the database
 
     :param dict user: user data
