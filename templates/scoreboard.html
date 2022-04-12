@@ -13,7 +13,7 @@
 <body>
     <ul>
         {% for donation in donations -%}
-            <li>{{ donation.amount }} - {{ donation.donor }}</li>
+            <li>{{ "%g" % donation.amount }} - {{ donation.donor }}</li>
         {% endfor -%}
     </ul>
 </body>
