@@ -12,6 +12,7 @@ from core.models.donations import Donation, OutputDonation
 # client = AsyncIOMotorClient(settings.MONGO_URI)
 # as_db = client[settings.MONGO_DB]
 # async_donations = as_db.test_donations
+from core.utils.webhooks import send_errorhook
 
 donations = db['test_donations']
 
@@ -96,7 +97,7 @@ def get_team_donations(team_id: str, donation_id: str = None):
             # process_donation_async(result)
         except Exception as e:
             print(e)
-            print(result)
+            send_errorhook(e)
 
 
 if __name__ == '__main__':
