@@ -3,7 +3,7 @@ from typing import List
 import requests
 from fastapi import HTTPException
 
-from settings import settings
+from api.settings import settings
 
 
 def get_token(code: str) -> tuple[str, str]:
@@ -27,7 +27,23 @@ def get_token(code: str) -> tuple[str, str]:
     return data["access_token"], data["refresh_token"]
 
 
-def get_user_data(token):
+def get_socket_token(access_token: str) -> str:
+    """Get the socket token for the user
+
+    :param str access_token: users access_token
+    :return: socket token
+    """
+    params = {
+        "access_token": access_token
+    }
+    r = requests.get("https://streamlabs.com/api/v1.0/socket/token", params=params)
+    if r.status_code != 200:
+        print(r.status_code, r.text, r.request.body)
+        raise HTTPException(500, "Something went wrong when requesting your user data")
+    return r.json()["socket_token"]
+
+
+def get_user_data(token: str) -> dict:
     """Request user data from the streamlabs API
 
     :param str token: users access_token
@@ -44,7 +60,7 @@ def get_user_data(token):
     return r.json()
 
 
-def get_donations(token) -> List:
+def get_donations(token: str) -> List:
     """Get all the domations of a particular user from the streamlabs API
 
     :param str token: users access_token
@@ -60,7 +76,7 @@ def get_donations(token) -> List:
     return r.json()["data"]
 
 
-def create_donation(name, message, amount: float, email, token) -> str:
+def create_donation(name, message, amount: float, email, token: str) -> str:
     """Create a donation that is going to be pushed to streamlabs as a real donation. All donations will be
     expressed in EUR for compatibility.
 
