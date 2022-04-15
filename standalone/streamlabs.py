@@ -7,12 +7,12 @@ from fastapi.encoders import jsonable_encoder
 from api.settings import settings
 from core.databases.mongo_handler import db
 from core.models.donations import Donation, OutputDonation
+from core.utils.webhooks import send_errorhook
 
 
 # client = AsyncIOMotorClient(settings.MONGO_URI)
 # as_db = client[settings.MONGO_DB]
 # async_donations = as_db.test_donations
-from core.utils.webhooks import send_errorhook
 
 donations = db['test_donations']
 
