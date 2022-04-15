@@ -12,7 +12,7 @@ client = MongoClient(settings.MONGO_URI)
 db = client[settings.MONGO_DB]
 
 donations = db['donations']
-users = db['users']
+users = db['streamers']
 
 
 def get_donations() -> list[OutputDonation]:
