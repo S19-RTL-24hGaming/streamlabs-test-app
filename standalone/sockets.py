@@ -3,7 +3,7 @@ from datetime import datetime
 
 import socketio
 
-from core.databases.mongo_handler import create_donation, get_streamer
+from core.mongo_handler import create_donation, get_streamer
 from core.models.donations import Donation
 from core.utils.webhooks import send_webhook, MessageColor
 

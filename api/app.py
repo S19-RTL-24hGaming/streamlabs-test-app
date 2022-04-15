@@ -6,7 +6,7 @@ from starlette import status
 from starlette.templating import Jinja2Templates
 
 from api.settings import settings
-from core.databases.mongo_handler import create_streamer, get_streamer, get_filtered_donations, create_donation, \
+from core.mongo_handler import create_streamer, get_streamer, get_filtered_donations, create_donation, \
     get_donations_scoreboard
 from core.models.donations import Donation, OutputDonation
 from core.models.streamers import Streamer
