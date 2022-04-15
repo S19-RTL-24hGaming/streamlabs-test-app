@@ -43,4 +43,4 @@ def send_errorhook(exception: Exception):
 
     embed = Embed(name, str(exception), color=MessageColor.RED.value)
     embed.add_field("Traceback", f"```python\n{traceback.format_exc()}```", False)
-    webhook.send_sync("<@&530041083187429377>", embed=embed)
+    webhook.send_sync("<@&963457791262089267>", embed=embed)
