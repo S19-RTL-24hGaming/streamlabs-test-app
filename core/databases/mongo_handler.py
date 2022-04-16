@@ -8,7 +8,7 @@ from api.settings import settings
 from core.models.donations import Donation, OutputDonation
 from core.models.streamers import Streamer, DatabaseStreamer
 
-client = MongoClient(settings.MONGO_URI)
+client = MongoClient(settings.MONGO_URI, connectTimeoutMS=5000)
 db = client[settings.MONGO_DB]
 
 donations = db['donations']
