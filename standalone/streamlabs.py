@@ -63,7 +63,7 @@ def get_team_donations(team_id: str, donation_id: str = None):
     if (count := donations_collection.count_documents({})) == 0:
         print("Something went wrong")
     else:
-        print("Should have gone well!\n Count is " + count)
+        print(f"Should have gone well!\n Count is {count}")
 
 
 if __name__ == '__main__':
