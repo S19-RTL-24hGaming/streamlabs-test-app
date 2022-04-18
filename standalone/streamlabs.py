@@ -7,7 +7,7 @@ from api.settings import settings
 from core.databases.mongo_handler import db
 from core.models.donations import Donation, OutputDonation
 
-donations_collection = db['test_donations']
+donations_collection = db['donations']
 
 
 def create_donation(donation: Donation, streamer_id: int, created_at: datetime = None) -> dict:
@@ -63,7 +63,7 @@ def get_team_donations(team_id: str, donation_id: str = None):
     if (count := donations_collection.count_documents({})) == 0:
         print("Something went wrong")
     else:
-        print(f"Should have gone well!\n Count is {count}")
+        print("Should have gone well!", f"Count is {count}")
 
 
 if __name__ == '__main__':
