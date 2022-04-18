@@ -1,14 +1,21 @@
+import traceback
+
 import requests
+from pymongo.errors import DuplicateKeyError
 
 from core.databases.mongo_handler import create_streamer
+from core.utils.webhooks import send_errorhook
 
 
 def process_streamers(streamers: list):
     for streamer in streamers:
         try:
             create_streamer(streamer)
+        except DuplicateKeyError:
+            print("Should update not insert")
         except Exception as e:
-            print(e, streamer)
+            send_errorhook(e)
+            print(e, traceback.format_exc(), streamer)
 
 
 def get_streamers(team_id: str):
