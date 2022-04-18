@@ -119,6 +119,9 @@ def create_streamer(user: dict) -> str:
     encoded = jsonable_encoder(streamer)
     if (existing_user := users.find_one({'user_id': streamer.user_id})) is not None:
         existing_user = DatabaseStreamer(**existing_user)
-        return users.update_one({'user_id': existing_user.user_id}, {'$set': jsonable_encoder(streamer.dict(exclude={"id"}))}).upserted_id
+        update_model = existing_user.copy(update=data)
+        update_model.updated_at = datetime.now()
+        update_encode = jsonable_encoder(update_model)
+        return users.update_one({'user_id': existing_user.user_id}, {'$set': update_encode}).upserted_id
     _id = users.insert_one(encoded).inserted_id
     return _id
