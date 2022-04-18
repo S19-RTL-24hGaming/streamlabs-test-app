@@ -112,8 +112,8 @@ def create_streamer(user: dict) -> str:
     :param dict user: user data
     :return: _id of the streamer document
     """
-    data = {"team_member_id": user["user"]['id'], "display_name": user["user"]['display_name'],
-            "username": user["user"]['slug'], "goal": user["goal"]["amount"]}
+    data = {"team_member_id": user["user"]['id'], "user_id": user["data"]["id"], "goal": user["goal"]["amount"],
+            "display_name": user["user"]['display_name'], "username": user["user"]['slug']}
     streamer = DatabaseStreamer(**data, created_at=datetime.now(), updated_at=datetime.now())
     data = jsonable_encoder(streamer)
     if (existing_user := users.find_one({'user_id': streamer.user_id})) is not None:
