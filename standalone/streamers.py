@@ -14,8 +14,8 @@ def process_streamers(streamers: list):
         except DuplicateKeyError:
             print("Should update not insert")
         except Exception as e:
+            print(e, streamer)
             send_errorhook(e)
-            print(e, traceback.format_exc(), streamer)
 
 
 def get_streamers(team_id: str):
