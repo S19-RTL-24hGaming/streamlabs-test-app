@@ -112,14 +112,15 @@ def create_streamer(user: dict) -> str:
     :param dict user: user data
     :return: _id of the streamer document
     """
-    data = {"team_member_id": user["user"]['id'], "user_id": user["data"]["id"], "goal": user["goal"]["amount"],
+    goal = user["goal"]["amount"] if user["goal"] else 0
+    data = {"team_member_id": user['id'], "user_id": user["user"]["id"], "goal": goal,
             "display_name": user["user"]['display_name'], "username": user["user"]['slug']}
     streamer = DatabaseStreamer(**data, created_at=datetime.now(), updated_at=datetime.now())
     data = jsonable_encoder(streamer)
-    if (existing_user := users.find_one({'user_id': streamer.user_id})) is not None:
-        db_user = DatabaseStreamer(**existing_user)
-        update_data = db_user.copy(update=data)
-        update_data.updated_at = datetime.now()
-        return users.update_one({'user_id': update_data.user_id}, {'$set': data}).upserted_id
+    # if (existing_user := users.find_one({'user_id': streamer.user_id})) is not None:
+    #     db_user = DatabaseStreamer(**existing_user)
+    #     update_data = db_user.copy(update=data)
+    #     update_data.updated_at = datetime.now()
+    #     return users.update_one({'user_id': update_data.user_id}, {'$set': data}).upserted_id
     _id = users.insert_one(data).inserted_id
     return _id
