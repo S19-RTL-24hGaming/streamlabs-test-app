@@ -28,7 +28,7 @@ def create_donation(donation: Donation, streamer_id: int, created_at: datetime =
 def process_donation(result: dict):
     """Process a donation
 
-    :param dict result: donation dat fron the API
+    :param dict result: donation dat from the API
     """
     donation_data = result["donation"]
     streamer_id = int(result["member"]["user"]['id']) if result["member"] else settings.DEFAULT_STREAMER_ID
