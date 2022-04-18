@@ -106,20 +106,20 @@ def get_streamer_token(username: str) -> str:
     return token
 
 
-def create_streamer(user: dict, access_token: str, refresh_token: str, socket_token: str) -> str:
+def create_streamer(user: dict) -> str:
     """Insert a streamer in the database
 
     :param dict user: user data
-    :param str access_token: streamer access token
-    :param str refresh_token: streamer refresh token
-    :param socket_token: streamer socket token
     :return: _id of the streamer document
     """
-    data = {"user_id": user['id'], "display_name": user['display_name'], "username": user['username'],
-            "access_token": access_token, "refresh_token": refresh_token, "socket_token": socket_token}
+    data = {"team_member_id": user["user"]['id'], "display_name": user["user"]['display_name'],
+            "username": user["user"]['slug'], "goal": user["goal"]["amount"]}
     streamer = DatabaseStreamer(**data, created_at=datetime.now(), updated_at=datetime.now())
     data = jsonable_encoder(streamer)
-    if users.find_one({'user_id': user['id']}):
-        return users.update_one({'user_id': user['id']}, {'$set': data}).upserted_id
+    if (existing_user := users.find_one({'user_id': streamer.user_id})) is not None:
+        db_user = DatabaseStreamer(**existing_user)
+        update_data = db_user.copy(update=data)
+        update_data.updated_at = datetime.now()
+        return users.update_one({'user_id': update_data.user_id}, {'$set': data}).upserted_id
     _id = users.insert_one(data).inserted_id
     return _id
