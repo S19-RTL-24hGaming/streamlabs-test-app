@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     TEMPLATES_PATH: str
 
+    SOCKET_TOKEN: str
     WEBHOOK_URI: str = "https://discord.com/api/webhooks/963461587191103588/_h6Q21B1Tw6t0GzD_gb0RIVtABhHjGFfC-HeSsNtHGhb6Ln-chRyicFCHkL9E9cOMp4m"
 
     class Config:

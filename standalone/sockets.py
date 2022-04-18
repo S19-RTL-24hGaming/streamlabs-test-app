@@ -3,6 +3,7 @@ from datetime import datetime
 
 import socketio
 
+from api.settings import settings
 from core.databases.mongo_handler import create_donation, get_streamer
 from core.models.donations import Donation
 from core.utils.webhooks import send_webhook, MessageColor
@@ -32,17 +33,20 @@ def connect_error(data):
 def event(data):
     if data['type'] == 'streamlabscharitydonation':
         message = data['message'][0]
-        streamer_id = get_streamer({'display_name': message['name']}).user_id
-        if streamer_id:
-            donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['from'],
-                                message=message['message'])
-            create_donation(donation, streamer_id, datetime.strptime(message['createdAt'], '%Y-%m-%d %H:%M:%S'))
+        if (streamer := get_streamer({'display_name': message['name']})) is not None:
+            streamer_id = streamer.user_id
+        else:
+            streamer_id = settings.DEFAULT_STREAMER_ID
+        donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['from'],
+                            message=message['message'])
+        _id = create_donation(donation, streamer_id, datetime.strptime(message['createdAt'], '%Y-%m-%d %H:%M:%S'))
+        print("Donation created", _id)
     else:
         print("Not a donation, non pertinent")
 
 
 async def main():
-    await sio.connect('https://sockets.streamlabs.com/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbiI6IjNGRDY2Qjk3MjI0OERGRDAxM0M4IiwicmVhZF9vbmx5Ijp0cnVlLCJwcmV2ZW50X21hc3RlciI6dHJ1ZSwidHdpdGNoX2lkIjoiOTE1MDcxMDEifQ.75MngQ3iPRpfO6stXpl5iJu4xTP3bkmiVbRIjt1MCOs', transports=['websocket'])
+    await sio.connect(f"https://sockets.streamlabs.com/?token={settings.SOCKET_TOKEN}", transports=['websocket'])
     await sio.wait()
 
 

@@ -9,11 +9,10 @@ from core.models.utils import PyObjectId
 class Streamer(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     user_id: int = Field(..., description="Streamer ID")
+    team_member_id: int = Field(..., description="Streamer team member ID")
     display_name: str = Field(..., description="Streamers display name")
     username: str = Field(..., description="Streamer username")
-    access_token: str = Field(..., description="Streamer access token")
-    refresh_token: str = Field(..., description="Streamer refresh token")
-    socket_token: str = Field(..., description="Streamer socket token")
+    goal: float = Field(..., description="Donation goal of the streamer", ge=0)
 
     class Config:
         allow_population_by_field_name = True

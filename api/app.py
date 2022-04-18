@@ -49,13 +49,15 @@ async def authorize_link():
     return link
 
 
-@app.get("/auth", status_code=status.HTTP_201_CREATED, tags=["Authentication"])
+@app.get("/auth", status_code=status.HTTP_201_CREATED, tags=["Authentication"], deprecated=True)
 async def authorize(code: str = Query(..., description="code given from the authorization of the user")):
-    """Callback url for our application to get user token when authorizing connection to our app"""
+    """Callback url for our application to get user token when authorizing connection to our app
+
+    DO NOT USE, DOESN'T WORK !!!
+    """
     access_token, refresh_token = get_token(code)
     user_data = get_user_data(access_token)
-    socket_token = get_socket_token(access_token)
-    create_streamer(user_data['streamlabs'], access_token, refresh_token, socket_token)
+    create_streamer(user_data['streamlabs'])
     return {"message": "Everything went well, thank you for your help"}
 
 
