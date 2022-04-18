@@ -39,8 +39,8 @@ def event(data):
             streamer_id = settings.DEFAULT_STREAMER_ID
         donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['from'],
                             message=message['message'])
-        create_donation(donation, streamer_id, datetime.strptime(message['createdAt'], '%Y-%m-%d %H:%M:%S'))
-        print("Donation created")
+        _id = create_donation(donation, streamer_id, datetime.strptime(message['createdAt'], '%Y-%m-%d %H:%M:%S'))
+        print("Donation created", _id)
     else:
         print("Not a donation, non pertinent")
 
