@@ -3,6 +3,7 @@ from datetime import datetime
 
 import socketio
 
+from api.settings import settings
 from core.databases.mongo_handler import create_donation, get_streamer
 from core.models.donations import Donation
 from core.utils.webhooks import send_webhook, MessageColor
@@ -33,10 +34,12 @@ def event(data):
     if data['type'] == 'streamlabscharitydonation':
         message = data['message'][0]
         streamer_id = get_streamer({'display_name': message['name']}).user_id
-        if streamer_id:
-            donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['from'],
+        if not streamer_id:
+            streamer_id = settings.DEFAULT_STREAMER_ID
+        donation = Donation(donation_id=message['id'], amount=message['amount'], donor=message['from'],
                                 message=message['message'])
-            create_donation(donation, streamer_id, datetime.strptime(message['createdAt'], '%Y-%m-%d %H:%M:%S'))
+        create_donation(donation, streamer_id, datetime.strptime(message['createdAt'], '%Y-%m-%d %H:%M:%S'))
+        print("Donation created")
     else:
         print("Not a donation, non pertinent")
 
